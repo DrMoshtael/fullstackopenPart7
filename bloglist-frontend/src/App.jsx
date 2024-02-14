@@ -12,9 +12,7 @@ import NotificationContext from './components/NotificationContext'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  // const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationText, notificationDispatch] = useContext(NotificationContext)
-  const [success, setSuccess] = useState(true)
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -35,10 +33,8 @@ const App = () => {
       blogService.setToken(theUser.token)
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(theUser))
       setUser(theUser)
-      setSuccess(true)
       notificationDispatch({ type:'LOGIN' })
     } catch (exception) {
-      setSuccess(false)
       notificationDispatch({ type:'LOGINERROR' })
     }
   }
@@ -47,7 +43,6 @@ const App = () => {
     event.preventDefault()
     setUser(null)
     window.localStorage.removeItem('loggedBlogappUser')
-    setSuccess(true)
     notificationDispatch({ type:'LOGOUT' })
   }
 
@@ -58,12 +53,10 @@ const App = () => {
       const blog = await blogService.postBlog(blogObject)
       const theBlog = await blogService.getOne(blog.id)
       setBlogs(blogs.concat(theBlog))
-      setSuccess(true)
       notificationDispatch({ type:'ADDBLOG', payload: blog })
       blogFormRef.current.toggleVisibilty()
     } catch (error) {
       console.log(error)
-      setSuccess(false)
       notificationDispatch({ type:'ADDBLOGERROR' })
     }
   }

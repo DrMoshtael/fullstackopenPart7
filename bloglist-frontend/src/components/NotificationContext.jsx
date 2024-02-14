@@ -2,20 +2,20 @@ import { createContext, useReducer } from 'react'
 
 const NotificationContext = createContext()
 
-const reducer = (state = '', action) => {
+const reducer = (state = { message: '', successful: true }, action) => {
   switch (action.type) {
   case 'LOGOUT':
-    return 'Logged out'
+    return { message: 'Logged out', successful: true }
   case 'ADDBLOG':
-    return `Blog '${action.payload.title}' by ${action.payload.author} added`
+    return { message: `Blog '${action.payload.title}' by ${action.payload.author} added`, successful: true }
   case 'ADDBLOGERROR':
-    return 'Blog failed to add'
+    return { message: 'Blog failed to add', successful: false }
   case 'LOGIN':
-    return 'Successful login'
+    return { message: 'Successful login', successful: true }
   case 'LOGINERROR':
-    return 'Wrong username or password'
+    return { message: 'Wrong username or password', successful: false }
   case 'NOTHING':
-    return ''
+    return { message: '', successful: true }
   default:
     return state
   }
