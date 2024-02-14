@@ -6,11 +6,14 @@ import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Toggleable from './components/Toggleable'
+import { useContext } from 'react'
+import NotificationContext from './components/NotificationContext'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [notificationMessage, setNotificationMessage] = useState(null)
+  // const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationText, notificationDispatch] = useContext(NotificationContext)
   const [success, setSuccess] = useState(true)
 
   useEffect(() => {
@@ -33,12 +36,10 @@ const App = () => {
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(theUser))
       setUser(theUser)
       setSuccess(true)
-      setNotificationMessage('Successful login')
-      setTimeout(() => setNotificationMessage(null), 2000)
+      notificationDispatch({ type:'LOGIN' })
     } catch (exception) {
       setSuccess(false)
-      setNotificationMessage('Wrong username or password')
-      setTimeout(() => setNotificationMessage(null), 2000)
+      notificationDispatch({ type:'LOGINERROR' })
     }
   }
 
@@ -47,8 +48,7 @@ const App = () => {
     setUser(null)
     window.localStorage.removeItem('loggedBlogappUser')
     setSuccess(true)
-    setNotificationMessage('Logged out')
-    setTimeout(() => setNotificationMessage(null), 2000)
+    notificationDispatch({ type:'LOGOUT' })
   }
 
   const blogFormRef = useRef()
@@ -56,21 +56,15 @@ const App = () => {
   const addBlog = async (blogObject) => {
     try {
       const blog = await blogService.postBlog(blogObject)
-      const theBlog = await blogService.getOne(blog.id) //Exercise 5.8 solution 1
+      const theBlog = await blogService.getOne(blog.id)
       setBlogs(blogs.concat(theBlog))
-      // const blogs = await blogService.getAll() //Exercise 5.8 solution 2
-      // setBlogs(blogs)
       setSuccess(true)
-      setNotificationMessage(
-        `A new blog, '${blog.title}' by ${blog.author} added`,
-      )
-      setTimeout(() => setNotificationMessage(null), 3000)
+      notificationDispatch({ type:'ADDBLOG', payload: blog })
       blogFormRef.current.toggleVisibilty()
     } catch (error) {
       console.log(error)
       setSuccess(false)
-      setNotificationMessage('Blog failed to add')
-      setTimeout(() => setNotificationMessage(null), 3000)
+      notificationDispatch({ type:'ADDBLOGERROR' })
     }
   }
 
@@ -79,7 +73,7 @@ const App = () => {
       blogs.map((blg) =>
         blg.id !== blog.id ? blg : { ...blog, likes: blog.likes + 1 },
       ),
-    ) //Update immediately for a more responsive feel
+    )
     const likedBlog = { ...blog, likes: ++blog.likes, user: blog.user.id }
     await blogService.postLike(blog.id, likedBlog)
   }
@@ -118,7 +112,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={notificationMessage} successful={success} />
+      <Notification />
       {!user && loginSection()}
       {user && blogSection(user)}
     </div>

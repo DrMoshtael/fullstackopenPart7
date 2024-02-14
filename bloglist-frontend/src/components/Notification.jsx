@@ -1,7 +1,17 @@
-const Notification = ({ message, successful }) => {
-  if (message === null) {
+import { useContext } from 'react'
+import NotificationContext from './NotificationContext'
+
+const Notification = () => {
+  const [message, dispatch] = useContext(NotificationContext)
+  console.log('msg',message)
+  if (message === '') {
     return null
   }
+  else setTimeout(() => dispatch({ type:'NOTHING' }), 3000)
+
+  let successful
+  if (message === 'Blog failed to add' || message === 'Wrong username or password') successful = false
+  else successful = true
 
   const notificationStyle = {
     color: successful ? 'green' : 'red',
