@@ -17,6 +17,7 @@ import Users from './components/Users'
 import User from './components/User'
 import usersService from './services/users'
 import BlogList from './components/BlogList'
+import Navbar from './components/Navbar'
 
 const App = () => {
   const [notificationText, notificationDispatch] =
@@ -124,9 +125,8 @@ const App = () => {
     return (
       <div>
         <Notification />
-        <h2> blogs</h2>
-        <p>{user.name} logged in</p>
-        <button onClick={handleLogout}>logout</button>
+        <Navbar user={user} handleLogout={handleLogout} />
+        <h2> blog list app</h2>
         <Routes>
           <Route
             path="/"
