@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import blogService from '../services/blogs'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import UserContext from './UserContext'
 
-const Blog = ({ blog, user, likeHandler }) => {
+const Blog = ({ blog, likeHandler }) => {
   const [collapsed, setCollapsed] = useState(true)
+  const [user, dispatch] = useContext(UserContext)
 
   const queryClient = useQueryClient()
 

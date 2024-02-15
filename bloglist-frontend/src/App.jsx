@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useRef, useContext } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
@@ -6,8 +6,8 @@ import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Toggleable from './components/Toggleable'
-import { useContext } from 'react'
 import NotificationContext from './components/NotificationContext'
+import UserContext from './components/UserContext'
 import {
   useQuery,
   useMutation,
@@ -16,18 +16,8 @@ import {
 } from '@tanstack/react-query'
 
 const App = () => {
-  const [user, setUser] = useState(null)
-  const [notificationText, notificationDispatch] =
-    useContext(NotificationContext)
-
-  useEffect(() => {
-    const userJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (userJSON) {
-      const theUser = JSON.parse(userJSON)
-      setUser(theUser)
-      blogService.setToken(theUser.token)
-    }
-  }, [])
+  const [notificationText, notificationDispatch] = useContext(NotificationContext)
+  const [user, userDipatch] = useContext(UserContext)
 
   const blogFormRef = useRef()
 
@@ -65,9 +55,7 @@ const App = () => {
   const logIn = async (credentials) => {
     try {
       const theUser = await loginService.login(credentials)
-      blogService.setToken(theUser.token)
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(theUser))
-      setUser(theUser)
+      userDipatch({ type: 'LOGIN', payload: theUser })
       notificationDispatch({ type: 'LOGIN' })
     } catch (exception) {
       notificationDispatch({ type: 'LOGINERROR' })
@@ -76,8 +64,7 @@ const App = () => {
 
   const handleLogout = (event) => {
     event.preventDefault()
-    setUser(null)
-    window.localStorage.removeItem('loggedBlogappUser')
+    userDipatch({ type: 'LOGOUT' })
     notificationDispatch({ type: 'LOGOUT' })
   }
 
@@ -114,7 +101,6 @@ const App = () => {
             key={blog.id}
             blog={blog}
             blogs={blogs}
-            user={user}
             likeHandler={() => handleLikeFor(blog)}
           />
         ))}

@@ -3,7 +3,7 @@ import NotificationContext from './NotificationContext'
 
 const Notification = () => {
   const [{ message, successful }, dispatch] = useContext(NotificationContext)
-  if (!message || message === '') {
+  if (message === '') {
     return null
   }
   else setTimeout(() => dispatch({ type:'NOTHING' }), 3000)

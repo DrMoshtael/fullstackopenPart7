@@ -2,7 +2,7 @@ import { createContext, useReducer } from 'react'
 
 const NotificationContext = createContext()
 
-const reducer = (state = { message: '', successful: true }, action) => {
+const reducer = (state, action) => {
   switch (action.type) {
   case 'LOGOUT':
     return { message: 'Logged out', successful: true }
@@ -22,7 +22,7 @@ const reducer = (state = { message: '', successful: true }, action) => {
 }
 
 export const NotificationContextProvider = (props) => {
-  const [text, dispatch] = useReducer(reducer, '')
+  const [text, dispatch] = useReducer(reducer, { message: '', successful: true })
   return (
     <NotificationContext.Provider value={[text, dispatch]}>
       {props.children}
