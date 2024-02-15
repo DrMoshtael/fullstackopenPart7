@@ -3,7 +3,6 @@ import NotificationContext from './NotificationContext'
 
 const Notification = () => {
   const [{ message, successful }, dispatch] = useContext(NotificationContext)
-  console.log('msg',message, successful)
   if (!message || message === '') {
     return null
   }

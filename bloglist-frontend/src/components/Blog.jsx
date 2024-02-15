@@ -1,8 +1,18 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-const Blog = ({ blog, blogs, setBlogs, user, likeHandler }) => {
+const Blog = ({ blog, user, likeHandler }) => {
   const [collapsed, setCollapsed] = useState(true)
+
+  const queryClient = useQueryClient()
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.deleteBlog,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+    }
+  })
 
   const toggleCollapse = () => {
     setCollapsed(!collapsed)
@@ -16,22 +26,15 @@ const Blog = ({ blog, blogs, setBlogs, user, likeHandler }) => {
     marginBottom: 5,
   }
 
-  // const handleLike = async () => {
-  //   setBlogs(blogs.map(blg => blg.id !== blog.id ? blg : { ...blog, likes: ++blog.likes })) //Update immediately for a more responsive feel
-  //   const likedBlog = { ...blog, likes: ++blog.likes, user: blog.user.id }
-  //   await blogService.postLike(blog.id, likedBlog)
-  // }
-
   const handleDelete = async () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      setBlogs(blogs.filter((blg) => blg.id !== blog.id))
-      await blogService.deleteBlog(blog.id)
+      deleteBlogMutation.mutate(blog.id)
     }
   }
 
   const fullView = () => {
     let usersBlog = false
-    if (blog.user.username === user.username) usersBlog = true //To avoid doing an additional GET request for the user ID, just use the username which is also unique
+    if (blog.user.username === user.username) usersBlog = true
 
     return (
       <div>
