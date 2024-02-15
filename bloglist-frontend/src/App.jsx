@@ -9,8 +9,16 @@ import Toggleable from './components/Toggleable'
 import NotificationContext from './components/NotificationContext'
 import UserContext from './components/UserContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useMatch,
+} from 'react-router-dom'
 import Users from './components/Users'
+import User from './components/User'
+import usersService from './services/users'
 
 const App = () => {
   const [notificationText, notificationDispatch] =
@@ -40,6 +48,23 @@ const App = () => {
     },
   })
 
+  const userQuery = useQuery({
+    queryKey: ['users'],
+    queryFn: usersService.getAllUsers,
+  })
+
+  const match = useMatch('/users/:id')
+  console.log('mtch',match)
+
+  if (userQuery.isError) return <p>Unable to retrieve users from the server</p>
+  else if (userQuery.isLoading) return <p>Data is loading...</p>
+
+  const users = userQuery.data
+  console.log('usrs', users)
+  const linkedUser = match
+    ? users.find((u) => u.id === match.params.id)
+    : null
+  console.log('lnkusr',linkedUser)
   // console.log(JSON.parse(JSON.stringify(query)))
 
   if (query.isError) {
@@ -123,12 +148,11 @@ const App = () => {
         <h2> blogs</h2>
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
-        <Router>
-          <Routes>
-            <Route path="/" element={blogSection(user)} />
-            <Route path="/users" element={<Users />} />
-          </Routes>
-        </Router>
+        <Routes>
+          <Route path="/" element={blogSection(user)} />
+          <Route path="/users" element={<Users users={users}/>} />
+          <Route path="/users/:id" element={<User user={linkedUser} />} />
+        </Routes>
       </div>
     )
   }
