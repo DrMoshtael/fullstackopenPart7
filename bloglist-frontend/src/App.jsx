@@ -8,15 +8,13 @@ import Notification from './components/Notification'
 import Toggleable from './components/Toggleable'
 import NotificationContext from './components/NotificationContext'
 import UserContext from './components/UserContext'
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-} from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import Users from './components/Users'
 
 const App = () => {
-  const [notificationText, notificationDispatch] = useContext(NotificationContext)
+  const [notificationText, notificationDispatch] =
+    useContext(NotificationContext)
   const [user, userDipatch] = useContext(UserContext)
 
   const blogFormRef = useRef()
@@ -86,11 +84,6 @@ const App = () => {
 
   const blogSection = (user) => (
     <div>
-      <h2> blogs</h2>
-      <p>
-        {user.name} logged in
-        <button onClick={handleLogout}>logout</button>
-      </p>
       <Toggleable buttonLabel="add new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Toggleable>
@@ -114,13 +107,31 @@ const App = () => {
     </div>
   )
 
-  return (
-    <div>
-      <Notification />
-      {!user && loginSection()}
-      {user && blogSection(user)}
-    </div>
-  )
+  if (!user) {
+    console.log('no user')
+    return (
+      <div>
+        <Notification />
+        {loginSection()}
+      </div>
+    )
+  } else {
+    console.log('a user')
+    return (
+      <div>
+        <Notification />
+        <h2> blogs</h2>
+        <p>{user.name} logged in</p>
+        <button onClick={handleLogout}>logout</button>
+        <Router>
+          <Routes>
+            <Route path="/" element={blogSection(user)} />
+            <Route path="/users" element={<Users />} />
+          </Routes>
+        </Router>
+      </div>
+    )
+  }
 }
 
 export default App
