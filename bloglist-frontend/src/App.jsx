@@ -3,9 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import loginService from './services/login'
-import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
-import Toggleable from './components/Toggleable'
 import NotificationContext from './components/NotificationContext'
 import UserContext from './components/UserContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -13,12 +11,12 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link,
   useMatch,
 } from 'react-router-dom'
 import Users from './components/Users'
 import User from './components/User'
 import usersService from './services/users'
+import BlogList from './components/BlogList'
 
 const App = () => {
   const [notificationText, notificationDispatch] =
@@ -54,17 +52,15 @@ const App = () => {
   })
 
   const match = useMatch('/users/:id')
-  console.log('mtch',match)
+  const matchBlog = useMatch('/blogs/:Bid')
 
   if (userQuery.isError) return <p>Unable to retrieve users from the server</p>
   else if (userQuery.isLoading) return <p>Data is loading...</p>
 
   const users = userQuery.data
-  console.log('usrs', users)
-  const linkedUser = match
-    ? users.find((u) => u.id === match.params.id)
-    : null
-  console.log('lnkusr',linkedUser)
+
+  const linkedUser = match ? users.find((u) => u.id === match.params.id) : null
+
   // console.log(JSON.parse(JSON.stringify(query)))
 
   if (query.isError) {
@@ -74,6 +70,9 @@ const App = () => {
   }
 
   const blogs = query.data
+  const linkedBlog = matchBlog
+    ? blogs.find((b) => b.id === matchBlog.params.Bid)
+    : null
 
   const logIn = async (credentials) => {
     try {
@@ -107,24 +106,6 @@ const App = () => {
     updateBlogMutation.mutate(likedBlog)
   }
 
-  const blogSection = (user) => (
-    <div>
-      <Toggleable buttonLabel="add new blog" ref={blogFormRef}>
-        <BlogForm createBlog={addBlog} />
-      </Toggleable>
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            blogs={blogs}
-            likeHandler={() => handleLikeFor(blog)}
-          />
-        ))}
-    </div>
-  )
-
   const loginSection = () => (
     <div>
       <h2>log in to application</h2>
@@ -133,7 +114,6 @@ const App = () => {
   )
 
   if (!user) {
-    console.log('no user')
     return (
       <div>
         <Notification />
@@ -141,7 +121,6 @@ const App = () => {
       </div>
     )
   } else {
-    console.log('a user')
     return (
       <div>
         <Notification />
@@ -149,9 +128,20 @@ const App = () => {
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
         <Routes>
-          <Route path="/" element={blogSection(user)} />
-          <Route path="/users" element={<Users users={users}/>} />
+          <Route
+            path="/"
+            element={
+              <BlogList
+                addBlog={addBlog}
+                blogFormRef={blogFormRef}
+                blogs={blogs}
+                handleLikeFor={handleLikeFor}
+              />
+            }
+          />
+          <Route path="/users" element={<Users users={users} />} />
           <Route path="/users/:id" element={<User user={linkedUser} />} />
+          <Route path="/blogs/:Bid" element={<Blog blog={linkedBlog} likeHandler={() => handleLikeFor(linkedBlog)}/>} />
         </Routes>
       </div>
     )
