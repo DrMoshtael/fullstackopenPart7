@@ -29,6 +29,11 @@ const postLike = async (theBlog) => {
   return response.data
 }
 
+const postComment = async (theBlog) => {
+  const res = await axios.post(`${baseUrl}/${theBlog.id}/comments`, theBlog)
+  return res.data
+}
+
 const deleteBlog = async (id) => {
   const config = {
     headers: {
@@ -39,4 +44,4 @@ const deleteBlog = async (id) => {
   return response
 }
 
-export default { getAll, postBlog, setToken, getOne, postLike, deleteBlog }
+export default { getAll, postBlog, setToken, getOne, postLike, deleteBlog, postComment }

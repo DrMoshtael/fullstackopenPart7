@@ -43,10 +43,19 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.put('/:id', async (request, response) => {
-    const { title, author, url, likes, user } = request.body
+    const { title, author, url, likes, user, comments } = request.body
     const new_blog = await Blog.findByIdAndUpdate(
         request.params.id,
-        { title, author, url, likes, user },
+        { title, author, url, likes, user, comments },
+        { new: true, runValidators: true, context: 'query' })
+    response.status(201).json(new_blog)
+})
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+    const { title, author, url, likes, user, comments } = request.body
+    const new_blog = await Blog.findByIdAndUpdate(
+        request.params.id,
+        { title, author, url, likes, user, comments },
         { new: true, runValidators: true, context: 'query' })
     response.status(201).json(new_blog)
 })

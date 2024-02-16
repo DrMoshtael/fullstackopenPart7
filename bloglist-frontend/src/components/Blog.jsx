@@ -3,8 +3,9 @@ import blogService from '../services/blogs'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import UserContext from './UserContext'
 import { useNavigate } from 'react-router-dom'
+import CommentForm from './CommentForm'
 
-const Blog = ({ blog, likeHandler }) => {
+const Blog = ({ blog, likeHandler, postComment }) => {
   const [collapsed, setCollapsed] = useState(true)
   const [user, dispatch] = useContext(UserContext)
   const navigate = useNavigate()
@@ -17,6 +18,11 @@ const Blog = ({ blog, likeHandler }) => {
       queryClient.invalidateQueries({ queryKey: ['blogs'] })
     },
   })
+
+  const createComment = (comment) => {
+    const new_blog = { ...blog, comments: blog.comments.concat(comment), user: blog.user.id }
+    postComment.mutate(new_blog)
+  }
 
   const toggleCollapse = () => {
     setCollapsed(!collapsed)
@@ -31,6 +37,10 @@ const Blog = ({ blog, likeHandler }) => {
 
   let usersBlog = false
   if (blog.user.username === user.username) usersBlog = true
+
+  const keyGenerator = () => (
+    Number((Math.random() * 1000000).toFixed(0))
+  )
 
   return (
     <div>
@@ -54,6 +64,13 @@ const Blog = ({ blog, likeHandler }) => {
         >
           remove
         </button>
+        <h3>comments</h3>
+        <CommentForm createComment={createComment} />
+        <ul>
+          {blog.comments.map((c) => (
+            <li key={keyGenerator()}>{c}</li>
+          ))}
+        </ul>
       </div>
     </div>
   )

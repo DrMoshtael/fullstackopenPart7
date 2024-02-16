@@ -47,6 +47,13 @@ const App = () => {
     },
   })
 
+  const commentMutation = useMutation({
+    mutationFn: blogService.postComment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+    },
+  })
+
   const userQuery = useQuery({
     queryKey: ['users'],
     queryFn: usersService.getAllUsers,
@@ -141,7 +148,16 @@ const App = () => {
           />
           <Route path="/users" element={<Users users={users} />} />
           <Route path="/users/:id" element={<User user={linkedUser} />} />
-          <Route path="/blogs/:Bid" element={<Blog blog={linkedBlog} likeHandler={() => handleLikeFor(linkedBlog)}/>} />
+          <Route
+            path="/blogs/:Bid"
+            element={
+              <Blog
+                blog={linkedBlog}
+                likeHandler={() => handleLikeFor(linkedBlog)}
+                postComment={commentMutation}
+              />
+            }
+          />
         </Routes>
       </div>
     )
