@@ -1,4 +1,12 @@
 import { useState } from 'react'
+import {
+  Form,
+  Label,
+  Input,
+  FormGroup,
+  FormContainer,
+  Button,
+} from './StyledComponents'
 
 const LoginForm = ({ logIn }) => {
   const [username, setUsername] = useState('')
@@ -12,31 +20,33 @@ const LoginForm = ({ logIn }) => {
   }
 
   return (
-    <form onSubmit={passCredentials}>
-      <div>
-        <label htmlFor="username">username</label>
-        <input
-          type="text"
-          value={username}
-          id="username"
-          onChange={({ target }) => setUsername(target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="password">password</label>
-        <input
-          type="password"
-          value={password}
-          id="password"
-          onChange={({ target }) => setPassword(target.value)}
-          required
-        />
-      </div>
-      <button id="login-button" type="submit">
-        Login
-      </button>
-    </form>
+    <FormContainer>
+      <Form onSubmit={passCredentials}>
+        <FormGroup>
+          <Label htmlFor="username">username</Label>
+          <Input
+            type="text"
+            value={username}
+            id="username"
+            onChange={({ target }) => setUsername(target.value)}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="password">password</Label>
+          <Input
+            type="password"
+            value={password}
+            id="password"
+            onChange={({ target }) => setPassword(target.value)}
+            required
+          />
+        </FormGroup>
+        <Button id="login-button" type="submit">
+          Login
+        </Button>
+      </Form>
+    </FormContainer>
   )
 }
 

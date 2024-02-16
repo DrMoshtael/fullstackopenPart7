@@ -1,6 +1,4 @@
-import usersService from '../services/users'
-import { useQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { List, ListItem } from './StyledComponents'
 
 const User = ({ user }) => {
 
@@ -8,11 +6,11 @@ const User = ({ user }) => {
     <div>
       <h2>{user.name}</h2>
       <h3>added blogs</h3>
-      <ul>
+      <List>
         {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <ListItem key={blog.id}>{blog.title}</ListItem>
         ))}
-      </ul>
+      </List>
     </div>
   )
 }

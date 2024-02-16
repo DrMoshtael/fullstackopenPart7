@@ -1,27 +1,28 @@
 import { Link } from 'react-router-dom'
+import { Table, TableHeader, TableCell } from './StyledComponents'
 
 const Users = ({ users }) => {
   return (
     <div>
       <h2>Users</h2>
-      <table>
+      <Table>
         <thead>
           <tr>
-            <th>User name</th>
-            <th>Blogs created</th>
+            <TableHeader>User name</TableHeader>
+            <TableHeader>Blogs created</TableHeader>
           </tr>
         </thead>
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
-              <td>
+              <TableCell>
                 <Link to={`/users/${user.id}`}>{user.name}</Link>
-              </td>
-              <td>{user.blogs.length}</td>
+              </TableCell>
+              <TableCell>{user.blogs.length}</TableCell>
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
     </div>
   )
 }

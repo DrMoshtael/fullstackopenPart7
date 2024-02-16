@@ -1,4 +1,12 @@
 import { useState } from 'react'
+import {
+  FormGroup,
+  Form,
+  FormContainer,
+  Label,
+  Input,
+  Button,
+} from './StyledComponents'
 
 const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
@@ -20,43 +28,45 @@ const BlogForm = ({ createBlog }) => {
   return (
     <>
       <h2>add new</h2>
-      <form onSubmit={addBlog}>
-        <div>
-          <label htmlFor="title">title:</label>
-          <input
-            type="text"
-            value={title}
-            id="title"
-            onChange={({ target }) => setTitle(target.value)}
-            placeholder="Enter title"
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="author">author:</label>
-          <input
-            type="text"
-            value={author}
-            id="author"
-            onChange={({ target }) => setAuthor(target.value)}
-            placeholder="Enter author"
-          />
-        </div>
-        <div>
-          <label htmlFor="url">url:</label>
-          <input
-            type="url"
-            value={url}
-            id="url"
-            onChange={({ target }) => setUrl(target.value)}
-            placeholder="Enter URL"
-            required
-          />
-        </div>
-        <button id="blogForm-button" type="submit">
-          add
-        </button>
-      </form>
+      <FormContainer>
+        <Form onSubmit={addBlog}>
+          <FormGroup>
+            <Label htmlFor="title">title:</Label>
+            <Input
+              type="text"
+              value={title}
+              id="title"
+              onChange={({ target }) => setTitle(target.value)}
+              placeholder="Enter title"
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="author">author:</Label>
+            <Input
+              type="text"
+              value={author}
+              id="author"
+              onChange={({ target }) => setAuthor(target.value)}
+              placeholder="Enter author"
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="url">url:</Label>
+            <Input
+              type="url"
+              value={url}
+              id="url"
+              onChange={({ target }) => setUrl(target.value)}
+              placeholder="Enter URL"
+              required
+            />
+          </FormGroup>
+          <Button id="blogForm-button" type="submit">
+            add
+          </Button>
+        </Form>
+      </FormContainer>
     </>
   )
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Form, Input, Button } from './StyledComponents'
 
 const CommentForm = ({ createComment }) => {
   const [comment, setComment] = useState('')
@@ -10,16 +11,16 @@ const CommentForm = ({ createComment }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
+    <Form onSubmit={handleSubmit}>
+      <Input
         type="text"
         value={comment}
         onChange={({ target }) => setComment(target.value)}
         placeholder="Enter comment"
         required
       />
-      <button type="submit">add comment</button>
-    </form>
+      <Button type="submit">add comment</Button>
+    </Form>
   )
 }
 
